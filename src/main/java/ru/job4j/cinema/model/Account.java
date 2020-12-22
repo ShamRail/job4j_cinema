@@ -10,6 +10,12 @@ public class Account {
 
     public Account() { }
 
+    public Account(int id, String username, String phoneNumber) {
+        this.username = username;
+        this.phoneNumber = phoneNumber;
+        this.id = id;
+    }
+
     public Account(String username, String phoneNumber) {
         this.username = username;
         this.phoneNumber = phoneNumber;
@@ -56,5 +62,14 @@ public class Account {
     @Override
     public int hashCode() {
         return Objects.hash(id, username, phoneNumber);
+    }
+
+    @Override
+    public String toString() {
+        return "Account{"
+                + "id=" + id
+                + ", username='" + username + '\''
+                + ", phoneNumber='" + phoneNumber + '\''
+                + '}';
     }
 }

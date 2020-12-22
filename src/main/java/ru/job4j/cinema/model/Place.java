@@ -12,6 +12,14 @@ public class Place {
 
     public Place() { }
 
+    public Place(int id, int row, int col, int price, Account account) {
+        this.id = id;
+        this.row = row;
+        this.col = col;
+        this.price = price;
+        this.account = account;
+    }
+
     public Place(int row, int col, int price, Account account) {
         this.row = row;
         this.col = col;
@@ -76,5 +84,16 @@ public class Place {
     @Override
     public int hashCode() {
         return Objects.hash(id, row, col);
+    }
+
+    @Override
+    public String toString() {
+        return "Place{"
+                + "id=" + id
+                + ", row=" + row
+                + ", col=" + col
+                + ", price=" + price
+                + ", account=" + account
+                + '}';
     }
 }
