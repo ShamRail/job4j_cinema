@@ -1,10 +1,149 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Cinema</title>
 </head>
 <body>
-Echo
+
+<div class="container">
+    <div class="row pt-3">
+        <h4>
+            Бронирование месте на сеанс
+        </h4>
+        <table class="table table-bordered" id="hall-table">
+
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="paymentWindow" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Бронь билета</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row pt-3">
+                            <h5 id="place-info">
+                                Вы выбрали ряд 1 место 1, Сумма : 500 рублей.
+                            </h5>
+                        </div>
+                        <form id="account-form">
+                            <input type="hidden" id="place_id" name="id" value="">
+                            <div class="form-group">
+                                <label for="username">ФИО</label>
+                                <input type="text" class="form-control" id="username" placeholder="ФИО" name="username">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Номер телефона</label>
+                                <input type="text" class="form-control" id="phone" placeholder="Номер телефона" name="phoneNumber">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" onclick="sendData()">Оплатить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row float-right">
+        <button type="button" class="btn btn-success" onclick="openModal()">Перейти к оплате</button>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script>
+
+    $(function () {
+        console.log('Page load!');
+        setTimeout(function(){ location.reload(); }, 15000);
+        $.ajax({
+            type: 'GET',
+            url: '/cinema/hall',
+            dataType: 'json',
+            success: function (places) {
+                let cellCount = places.length;
+                let rowCount = 0;
+                let colCount = 0;
+                for (let i = 0; i < cellCount; i++) {
+                    rowCount = Math.max(rowCount, places[i].row);
+                    colCount = Math.max(colCount, places[i].col);
+                }
+
+                let tHead = '';
+                for (let i = 0; i < colCount; i++) {
+                    tHead += `<th>${i + 1}</th>`;
+                }
+                tHead = `<thead>
+                        <th style="width: 120px;">Ряд / Место</th>
+                        ${tHead}
+                    </thead>`;
+
+                let tBody = '';
+                for (let row = 1; row <= rowCount; row++) {
+                    let tr = `<td>${row}</td>`;
+                    for (let col = 1; col <= colCount; col++) {
+                        for (let i = 0; i < cellCount; i++) {
+                            if (places[i].row === row && places[i].col === col) {
+                                tr += `<td class=${places[i].account != null ? "bg-light" : "bg-success"}>
+                                            <input type="radio" name="place"
+                                                row="${row}" col="${col}" price="${places[i].price}" id="${places[i].id}">Ряд ${row}, Место ${col}
+                                       </td>`;
+                                break;
+                            }
+                        }
+                    }
+                    tBody += `<tr>${tr}</tr>`;
+                }
+                tBody = `<tbody>${tBody}</tbody>`
+                $('#hall-table').html(tHead + tBody);
+            }
+        });
+    });
+
+    function openModal() {
+        let activeRadio = $('input[type=radio]:checked');
+        $('#place-info').text(
+            `Вы выбрали ряд ${activeRadio.attr('row')} место ${activeRadio.attr('col')}, Сумма : ${activeRadio.attr('price')} рублей.`
+        );
+        $('#place_id').val(activeRadio.attr('id'));
+        $('#paymentWindow').modal('show');
+    }
+
+    function sendData() {
+        $.ajax({
+            url: '/cinema/hall',
+            type: 'POST',
+            data: $('#account-form').serialize(),
+            success: function () {
+                $('#paymentWindow').modal('hide');
+                document.location.reload();
+            },
+            error: function (e) {
+                console.log(e)
+            }
+        });
+    }
+
+</script>
+
 </body>
 </html>

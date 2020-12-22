@@ -7,13 +7,13 @@
 
     <display-name>Archetype Created Web Application</display-name>
 
-<!--    <servlet>-->
-<!--        <servlet-name>PostServlet</servlet-name>-->
-<!--        <servlet-class>ru.job4j.dreamjob.controller.PostServlet</servlet-class>-->
-<!--    </servlet>-->
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>PostServlet</servlet-name>-->
-<!--        <url-pattern>/posts.do</url-pattern>-->
-<!--    </servlet-mapping>-->
+    <servlet>
+        <servlet-name>HallController</servlet-name>
+        <servlet-class>ru.job4j.cinema.controller.HallController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HallController</servlet-name>
+        <url-pattern>/hall</url-pattern>
+    </servlet-mapping>
 
 </web-app>

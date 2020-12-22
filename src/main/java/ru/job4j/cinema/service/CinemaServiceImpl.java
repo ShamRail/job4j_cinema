@@ -66,7 +66,6 @@ public class CinemaServiceImpl implements CinemaService {
         } catch (SQLException throwables) {
             LOGGER.error("Error to connect! Cause: {0}", throwables.getCause());
         }
-
     }
 
     @Override
@@ -110,5 +109,8 @@ public class CinemaServiceImpl implements CinemaService {
     }
 
 
-
+    @Override
+    public void close() throws Exception {
+        pool.close();
+    }
 }
