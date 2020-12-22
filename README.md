@@ -1,1 +1,1 @@
-## job4j_cinema 
+## job4j_cinema ![img](https://travis-ci.com/ShamRail/job4j_cinema.svg?branch=master)
